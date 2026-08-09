@@ -17,7 +17,17 @@ async function connectDB() {
 
   const dbName = process.env.DB_NAME || 'demoreco';
 
-  client = new MongoClient(uri);
+  // Explicit TLS configuration for cloud hosting providers (e.g. Render) & MongoDB Atlas
+  const clientOptions = {
+    serverSelectionTimeoutMS: 10000
+  };
+
+  // Enable TLS for SRV connection strings or production environments
+  if (uri.startsWith('mongodb+srv://') || uri.includes('ssl=true') || process.env.NODE_ENV === 'production') {
+    clientOptions.tls = true;
+  }
+
+  client = new MongoClient(uri, clientOptions);
   await client.connect();
   db = client.db(dbName);
 

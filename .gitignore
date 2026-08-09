@@ -1,0 +1,19 @@
+# Node.js dependencies
+node_modules/
+**/node_modules/
+
+# Production build outputs
+dist/
+**/dist/
+build/
+
+# Environment secrets
+.env
+.env.local
+*.env
+
+# Logs and system files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db

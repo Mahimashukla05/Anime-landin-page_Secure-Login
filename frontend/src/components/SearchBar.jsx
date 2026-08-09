@@ -4,9 +4,10 @@ export default function SearchBar({ searchQuery, setSearchQuery, onClear }) {
   return (
     <div className="search-box">
       <input
+        id="main-search-input"
         type="text"
         className="search-input"
-        placeholder="Search anime by title, genre, or keywords (e.g. Naruto, Sci-Fi)..."
+        placeholder="Search anime by title, genre, or keywords (e.g. Naruto, Steins)..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />

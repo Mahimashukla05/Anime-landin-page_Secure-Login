@@ -29,13 +29,6 @@ export default function Navbar({ onOpenAuthModal, onOpenOnboardingModal }) {
   return (
     <header className="navbar">
       <a href="#" className="logo">DemoReco</a>
-      <nav>
-        <ul className="nav-links">
-          <li className="nav-item active"><a href="#explore">Explore Catalog</a></li>
-          <li className="nav-item"><a href="#top-rated">Top Rated</a></li>
-          <li className="nav-item"><a href="#genres">Genres</a></li>
-        </ul>
-      </nav>
 
       <div className="nav-actions">
         {user ? (

@@ -36,13 +36,26 @@ function MainApp() {
     }
   };
 
+  const handleSearchClick = () => {
+    const searchInput = document.getElementById('main-search-input');
+    if (searchInput) {
+      searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => {
+        searchInput.focus();
+      }, 300);
+    }
+  };
+
   return (
     <div className="app-container">
       <Navbar
         onOpenAuthModal={handleOpenAuthModal}
         onOpenOnboardingModal={handleOpenOnboardingModal}
       />
-      <Hero onExploreClick={handleExploreClick} />
+      <Hero
+        onExploreClick={handleExploreClick}
+        onSearchClick={handleSearchClick}
+      />
       <main>
         <Explore onOpenAuthModal={handleOpenAuthModal} />
       </main>

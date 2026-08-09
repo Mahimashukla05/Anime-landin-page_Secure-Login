@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Hero({ onExploreClick }) {
+export default function Hero({ onExploreClick, onSearchClick }) {
   return (
     <section className="hero-section">
       <div className="hero-content">
@@ -15,9 +15,9 @@ export default function Hero({ onExploreClick }) {
           <button className="btn-cta primary" onClick={onExploreClick}>
             🔥 Explore Catalog
           </button>
-          <a href="#search" className="btn-cta secondary">
-            🔍 Real-Time Search
-          </a>
+          <button className="btn-cta secondary" onClick={onSearchClick}>
+            🔎 Real-Time Search
+          </button>
         </div>
         <div className="hero-stats">
           <div className="stat-pill"><strong>1,000+</strong> Titles</div>

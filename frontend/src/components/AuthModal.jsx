@@ -41,33 +41,52 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
   };
 
   return (
-    <div className="auth-modal" style={{ display: 'flex' }}>
-      <div className="auth-box fancy-box">
-        <span className="close-btn" onClick={onClose}>✕</span>
+    <div className="auth-modal" onClick={onClose}>
+      <div className="auth-box" onClick={(e) => e.stopPropagation()}>
+        <span className="close-btn" onClick={onClose} title="Close">✕</span>
 
-        <h2>{mode === 'login' ? 'Login to DemoReco' : 'Create Account'}</h2>
+        <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+          <h2 style={{
+            fontFamily: 'Outfit, sans-serif',
+            fontSize: '1.6rem',
+            fontWeight: 800,
+            color: '#fff',
+            background: 'linear-gradient(to right, #ffffff, #ff80ff)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            {mode === 'login' ? 'Welcome Back' : 'Create DemoReco Account'}
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: '#a098b5', marginTop: '4px' }}>
+            {mode === 'login' ? 'Log in to access your personalized recommendations' : 'Join DemoReco to discover personalized anime'}
+          </p>
+        </div>
 
         {authError && (
           <div style={{
-            background: 'rgba(255, 0, 100, 0.2)',
-            border: '1px solid #ff0055',
-            padding: '10px',
-            borderRadius: '8px',
+            background: 'rgba(255, 0, 100, 0.15)',
+            border: '1px solid rgba(255, 0, 100, 0.5)',
+            padding: '10px 14px',
+            borderRadius: '12px',
             color: '#ff80aa',
             fontSize: '0.85rem',
-            marginBottom: '14px',
-            textAlign: 'center'
+            marginTop: '14px',
+            textAlign: 'center',
+            boxShadow: '0 0 12px rgba(255, 0, 100, 0.2)'
           }}>
-            {authError}
+            ⚠️ {authError}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="auth-form">
           {mode === 'signup' && (
             <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#e0d8f0', marginBottom: '6px' }}>
+                Username
+              </label>
               <input
                 type="text"
-                placeholder="Username (min 3 chars)"
+                placeholder="Pick a username (min 3 chars)"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -76,9 +95,12 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
           )}
 
           <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#e0d8f0', marginBottom: '6px' }}>
+              Email Address
+            </label>
             <input
               type="email"
-              placeholder="Email address"
+              placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -86,28 +108,31 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
           </div>
 
           <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#e0d8f0', marginBottom: '6px' }}>
+              Password
+            </label>
             <input
               type="password"
-              placeholder="Password (min 8 chars)"
+              placeholder="•••••••• (min 8 chars)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
 
-          <button type="submit" className="neon-button" disabled={isSubmitting} style={{ marginTop: '16px' }}>
-            {isSubmitting ? 'Processing...' : mode === 'login' ? 'Login' : 'Sign Up'}
+          <button type="submit" className="neon-button" disabled={isSubmitting} style={{ marginTop: '10px' }}>
+            {isSubmitting ? 'Processing...' : mode === 'login' ? 'Log In' : 'Create Account'}
           </button>
         </form>
 
-        <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '0.85rem', color: '#ccc' }}>
+        <div style={{ marginTop: '22px', textAlign: 'center', fontSize: '0.88rem', color: '#a098b5', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '16px' }}>
           {mode === 'login' ? (
             <p>
-              Don't have an account?{' '}
+              Don't have an account yet?{' '}
               <button
                 type="button"
                 onClick={() => switchMode('signup')}
-                style={{ background: 'none', border: 'none', color: '#ff80ff', cursor: 'pointer', fontWeight: 600 }}
+                style={{ background: 'none', border: 'none', color: '#ff80ff', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline' }}
               >
                 Sign Up
               </button>
@@ -118,9 +143,9 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
               <button
                 type="button"
                 onClick={() => switchMode('login')}
-                style={{ background: 'none', border: 'none', color: '#ff80ff', cursor: 'pointer', fontWeight: 600 }}
+                style={{ background: 'none', border: 'none', color: '#ff80ff', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline' }}
               >
-                Login
+                Log In
               </button>
             </p>
           )}

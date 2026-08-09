@@ -28,7 +28,7 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
   // Question 1 State (3 Favorite Anime)
   const [animeSearch, setAnimeSearch] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedAnime, setSelectedAnime] = useState([]); // [{ malId, title, poster }]
+  const [selectedAnime, setSelectedAnime] = useState([]); // [{ id, malId, title, poster }]
   const [searching, setSearching] = useState(false);
 
   // Question 2 State (Genres)
@@ -154,24 +154,51 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
   };
 
   return (
-    <div className="auth-modal" style={{ display: 'flex', zIndex: 10000 }}>
-      <div className="auth-box fancy-box" style={{ maxWidth: '680px', width: '90%' }}>
-        <span className="close-btn" onClick={onClose}>✕</span>
+    <div className="auth-modal" onClick={onClose}>
+      <div className="auth-box" style={{ maxWidth: '620px' }} onClick={(e) => e.stopPropagation()}>
+        <span className="close-btn" onClick={onClose} title="Close">✕</span>
+
+        {/* Step Progress Bar Indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
+          {[1, 2, 3].map(i => (
+            <div
+              key={i}
+              style={{
+                height: '6px',
+                borderRadius: '3px',
+                width: i === step ? '32px' : '16px',
+                background: i <= step ? 'linear-gradient(90deg, #a855f7, #ec4899)' : 'rgba(255, 255, 255, 0.12)',
+                boxShadow: i <= step ? '0 0 10px rgba(236, 72, 153, 0.5)' : 'none',
+                transition: 'all 200ms ease'
+              }}
+            />
+          ))}
+        </div>
 
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <span style={{
-            fontSize: '0.8rem',
+            fontSize: '0.78rem',
             fontWeight: 700,
             textTransform: 'uppercase',
             letterSpacing: '1px',
             color: '#ff80ff',
             background: 'rgba(255, 0, 204, 0.15)',
-            padding: '4px 12px',
-            borderRadius: '12px'
+            padding: '4px 14px',
+            borderRadius: '12px',
+            border: '1px solid rgba(255, 0, 204, 0.3)'
           }}>
             Step {step} of 3
           </span>
-          <h2 style={{ fontSize: '1.5rem', marginTop: '10px', color: '#fff' }}>
+          <h2 style={{
+            fontFamily: 'Outfit, sans-serif',
+            fontSize: '1.45rem',
+            fontWeight: 800,
+            marginTop: '10px',
+            color: '#fff',
+            background: 'linear-gradient(to right, #ffffff, #ff80ff)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
             {step === 1 && 'Pick 3 Anime You Already Love'}
             {step === 2 && 'Which Genres Do You Enjoy?'}
             {step === 3 && 'What Experience Are You Looking For?'}
@@ -180,30 +207,29 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
 
         {error && (
           <div style={{
-            background: 'rgba(255, 0, 100, 0.2)',
-            border: '1px solid #ff0055',
-            padding: '10px',
-            borderRadius: '8px',
+            background: 'rgba(255, 0, 100, 0.15)',
+            border: '1px solid rgba(255, 0, 100, 0.5)',
+            padding: '10px 14px',
+            borderRadius: '12px',
             color: '#ff80aa',
             fontSize: '0.85rem',
             marginBottom: '16px',
             textAlign: 'center'
           }}>
-            {error}
+            ⚠️ {error}
           </div>
         )}
 
         {/* STEP 1: Favorite Anime Selection */}
         {step === 1 && (
           <div>
-            <div style={{ marginBottom: '16px' }}>
+            <div style={{ marginBottom: '14px' }}>
               <input
                 type="text"
                 className="search-input"
                 placeholder="Search favorite anime (e.g. Fullmetal, Steins;Gate)..."
                 value={animeSearch}
                 onChange={(e) => setAnimeSearch(e.target.value)}
-                style={{ width: '100%' }}
               />
             </div>
 
@@ -211,14 +237,16 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px', minHeight: '36px' }}>
               {selectedAnime.map(item => (
                 <span key={item.id} style={{
-                  background: 'linear-gradient(135deg, #ff00cc, #9900ff)',
+                  background: 'linear-gradient(135deg, #ec4899, #a855f7)',
                   color: 'white',
-                  padding: '4px 10px',
+                  padding: '5px 12px',
                   borderRadius: '16px',
                   fontSize: '0.8rem',
+                  fontWeight: 600,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  gap: '6px',
+                  boxShadow: '0 0 10px rgba(236, 72, 153, 0.4)'
                 }}>
                   {item.title}
                   <button onClick={() => toggleAnimeSelection(item)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
@@ -234,14 +262,14 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
             {/* Anime Grid Selection */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
-              gap: '12px',
-              maxHeight: '260px',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+              gap: '10px',
+              maxHeight: '240px',
               overflowY: 'auto',
               paddingRight: '4px'
             }}>
               {searching ? (
-                <p style={{ color: '#a098b5', gridColumn: 'span 4', textAlign: 'center' }}>Searching anime...</p>
+                <p style={{ color: '#a098b5', gridColumn: 'span 4', textAlign: 'center', padding: '20px' }}>Searching anime...</p>
               ) : searchResults.map(anime => {
                 const isSel = selectedAnime.some(item => item.id === (anime._id || anime.malId).toString());
                 return (
@@ -249,25 +277,26 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
                     key={anime._id || anime.malId}
                     onClick={() => toggleAnimeSelection(anime)}
                     style={{
-                      border: isSel ? '2px solid #ff00cc' : '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '10px',
+                      border: isSel ? '2px solid #ec4899' : '1px solid rgba(255, 255, 255, 0.12)',
+                      borderRadius: '12px',
                       overflow: 'hidden',
                       cursor: 'pointer',
-                      background: isSel ? 'rgba(255, 0, 204, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                      background: isSel ? 'rgba(236, 72, 153, 0.25)' : 'rgba(30, 15, 55, 0.5)',
+                      boxShadow: isSel ? '0 0 14px rgba(236, 72, 153, 0.5)' : 'none',
                       transition: 'all 0.2s ease',
                       position: 'relative'
                     }}
                   >
                     <img
-                      src={anime.poster || 'https://via.placeholder.com/130x180'}
+                      src={anime.poster || 'https://via.placeholder.com/120x160'}
                       alt={anime.title}
-                      style={{ width: '100%', height: '120px', objectFit: 'cover' }}
+                      style={{ width: '100%', height: '110px', objectFit: 'cover' }}
                     />
                     <div style={{ padding: '6px', fontSize: '0.75rem', fontWeight: 600, color: isSel ? '#ff80ff' : '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {anime.title}
                     </div>
                     {isSel && (
-                      <div style={{ position: 'absolute', top: 4, right: 4, background: '#ff00cc', color: 'white', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 'bold' }}>✓</div>
+                      <div style={{ position: 'absolute', top: 4, right: 4, background: '#ec4899', color: 'white', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 'bold' }}>✓</div>
                     )}
                   </div>
                 );
@@ -279,11 +308,11 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
         {/* STEP 2: Preferred Genres */}
         {step === 2 && (
           <div>
-            <p style={{ fontSize: '0.9rem', color: '#a098b5', marginBottom: '16px', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.88rem', color: '#a098b5', marginBottom: '16px', textAlign: 'center' }}>
               Select at least 1 genre you love watching.
             </p>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center', maxHeight: '280px', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center', maxHeight: '260px', overflowY: 'auto', padding: '4px' }}>
               {GENRE_OPTIONS.map(genre => {
                 const isSel = selectedGenres.includes(genre);
                 return (
@@ -291,15 +320,15 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
                     key={genre}
                     onClick={() => toggleGenre(genre)}
                     style={{
-                      padding: '10px 20px',
+                      padding: '9px 18px',
                       borderRadius: '20px',
-                      border: isSel ? 'none' : '1px solid rgba(255, 255, 255, 0.2)',
-                      background: isSel ? 'linear-gradient(135deg, #ff00cc, #9900ff)' : 'rgba(255, 255, 255, 0.08)',
+                      border: isSel ? 'none' : '1px solid rgba(255, 255, 255, 0.15)',
+                      background: isSel ? 'linear-gradient(135deg, #a855f7, #ec4899)' : 'rgba(30, 15, 55, 0.6)',
                       color: 'white',
                       fontWeight: isSel ? 700 : 500,
                       cursor: 'pointer',
-                      boxShadow: isSel ? '0 0 12px rgba(255, 0, 204, 0.5)' : 'none',
-                      transition: 'all 0.2s ease'
+                      boxShadow: isSel ? '0 0 14px rgba(236, 72, 153, 0.5)' : 'none',
+                      transition: 'all 0.18s ease'
                     }}
                   >
                     {isSel ? `✓ ${genre}` : genre}
@@ -313,11 +342,11 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
         {/* STEP 3: Experience / Mood Selection */}
         {step === 3 && (
           <div>
-            <p style={{ fontSize: '0.9rem', color: '#a098b5', marginBottom: '16px', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.88rem', color: '#a098b5', marginBottom: '16px', textAlign: 'center' }}>
               Select the mood or experience you want DemoReco to prioritize.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', maxHeight: '280px', overflowY: 'auto' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '10px', maxHeight: '260px', overflowY: 'auto', paddingRight: '4px' }}>
               {EXPERIENCE_OPTIONS.map(exp => {
                 const isSel = selectedExperiences.includes(exp.id);
                 return (
@@ -325,18 +354,19 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
                     key={exp.id}
                     onClick={() => toggleExperience(exp.id)}
                     style={{
-                      padding: '14px',
-                      borderRadius: '12px',
-                      border: isSel ? '2px solid #ff00cc' : '1px solid rgba(255, 255, 255, 0.1)',
-                      background: isSel ? 'rgba(255, 0, 204, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                      padding: '12px 14px',
+                      borderRadius: '14px',
+                      border: isSel ? '2px solid #ec4899' : '1px solid rgba(255, 255, 255, 0.12)',
+                      background: isSel ? 'rgba(236, 72, 153, 0.2)' : 'rgba(30, 15, 55, 0.5)',
+                      boxShadow: isSel ? '0 0 14px rgba(236, 72, 153, 0.35)' : 'none',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease'
+                      transition: 'all 0.18s ease'
                     }}
                   >
-                    <div style={{ fontWeight: 700, color: isSel ? '#ff80ff' : '#fff', fontSize: '0.95rem', marginBottom: '4px' }}>
+                    <div style={{ fontWeight: 700, color: isSel ? '#ff80ff' : '#fff', fontSize: '0.92rem', marginBottom: '4px' }}>
                       {exp.label}
                     </div>
-                    <div style={{ fontSize: '0.78rem', color: '#a098b5' }}>
+                    <div style={{ fontSize: '0.78rem', color: '#a098b5', lineHeight: 1.35 }}>
                       {exp.desc}
                     </div>
                   </div>
@@ -347,7 +377,7 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
         )}
 
         {/* Modal Wizard Navigation */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '22px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
           {step > 1 ? (
             <button className="btn-auth" onClick={() => setStep(step - 1)}>
               ← Back

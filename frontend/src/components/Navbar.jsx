@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar({ onOpenAuthModal, onOpenOnboardingModal }) {
   const { user, logout } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   const getInitials = (name) => {
     if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
     return name.slice(0, 2).toUpperCase();
   };
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className="navbar">
@@ -23,7 +39,7 @@ export default function Navbar({ onOpenAuthModal, onOpenOnboardingModal }) {
 
       <div className="nav-actions">
         {user ? (
-          <div className="user-profile dropdown" style={{ position: 'relative' }}>
+          <div className="user-profile" ref={dropdownRef}>
             <div
               className="user-circle"
               onClick={() => setShowDropdown(!showDropdown)}
@@ -33,61 +49,28 @@ export default function Navbar({ onOpenAuthModal, onOpenOnboardingModal }) {
             </div>
 
             {showDropdown && (
-              <ul
-                className="dropdown-menu"
-                style={{
-                  display: 'block',
-                  position: 'absolute',
-                  top: '110%',
-                  right: 0,
-                  background: '#140024',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  borderRadius: '10px',
-                  padding: '10px 0',
-                  boxShadow: '0 8px 20px rgba(0, 0, 0, 0.5)',
-                  minWidth: '170px',
-                  zIndex: 100
-                }}
-              >
-                <li style={{ padding: '8px 16px', color: '#ff80ff', fontSize: '0.85rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+              <ul className="dropdown-menu">
+                <li style={{ padding: '10px 18px', color: '#ff80ff', fontSize: '0.85rem', fontWeight: 700, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
                   👤 {user.username}
                 </li>
-                <li style={{ padding: '8px 16px' }}>
+                <li>
                   <button
                     onClick={() => {
                       setShowDropdown(false);
                       onOpenOnboardingModal();
                     }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#00f2fe',
-                      cursor: 'pointer',
-                      fontSize: '0.85rem',
-                      fontWeight: 600,
-                      width: '100%',
-                      textAlign: 'left'
-                    }}
+                    style={{ color: '#00f2fe' }}
                   >
                     ⚙️ Edit Preferences
                   </button>
                 </li>
-                <li style={{ padding: '8px 16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <li style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
                   <button
                     onClick={() => {
                       setShowDropdown(false);
                       logout();
                     }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#ff4444',
-                      cursor: 'pointer',
-                      fontSize: '0.85rem',
-                      fontWeight: 600,
-                      width: '100%',
-                      textAlign: 'left'
-                    }}
+                    style={{ color: '#ff4444' }}
                   >
                     🚪 Logout
                   </button>

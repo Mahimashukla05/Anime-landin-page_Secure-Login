@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import SearchBar from '../components/SearchBar';
 import GenreFilter from '../components/GenreFilter';
-import AnimeGrid from '../components/AnimeGrid';
+import AnimeGrid, { getAnimeIds } from '../components/AnimeGrid';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 
@@ -22,6 +22,7 @@ export default function Explore({ onOpenAuthModal }) {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('');
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'top-rated', 'likes', 'watchlist', 'dislikes'
 
   // Local Sets for O(1) performance lookup
   const [userInteractions, setUserInteractions] = useState({
@@ -62,11 +63,14 @@ export default function Explore({ onOpenAuthModal }) {
     setError(null);
 
     try {
-      let url = API_ANIME_URL;
+      let url = `${API_ANIME_URL}?limit=100`;
+
       if (searchQuery.trim() !== '') {
         url = `${API_ANIME_URL}/search?q=${encodeURIComponent(searchQuery.trim())}`;
       } else if (selectedGenre !== '') {
-        url = `${API_ANIME_URL}?genre=${encodeURIComponent(selectedGenre)}`;
+        url = `${API_ANIME_URL}?genre=${encodeURIComponent(selectedGenre)}&limit=100`;
+      } else if (activeTab === 'top-rated') {
+        url = `${API_ANIME_URL}?sort=score&limit=100`;
       }
 
       const response = await fetch(url);
@@ -76,13 +80,14 @@ export default function Explore({ onOpenAuthModal }) {
 
       const json = await response.json();
       setAnimeList(json.data || []);
+
     } catch (err) {
       console.error('[Explore Fetch Error]', err);
       setError(err.message || 'Could not connect to DemoReco Backend API.');
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, selectedGenre]);
+  }, [searchQuery, selectedGenre, activeTab]);
 
   // 3. Fetch User Active Interactions
   const fetchUserInteractions = useCallback(async () => {
@@ -113,6 +118,7 @@ export default function Explore({ onOpenAuthModal }) {
     }
   }, [user, fetchWithAuth]);
 
+  // Debounced search & filter fetch trigger
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchAnime();
@@ -125,7 +131,32 @@ export default function Explore({ onOpenAuthModal }) {
     fetchRecommendations();
   }, [fetchUserInteractions, fetchRecommendations]);
 
-  // 4. Toggle Interaction Handler
+  // 4. Non-conflicting filter action handlers
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    if (query.trim() !== '') {
+      setSelectedGenre('');
+      setActiveTab('all');
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
+
+  const handleSelectGenre = (genre) => {
+    setSelectedGenre(genre);
+    setSearchQuery('');
+    setActiveTab('all');
+  };
+
+  const handleSelectTab = (tabKey) => {
+    setActiveTab(tabKey);
+    setSelectedGenre('');
+    setSearchQuery('');
+  };
+
+  // 5. Toggle Interaction Handler
   const handleToggleInteraction = async (animeId, action) => {
     if (!user) {
       alert('Please log in to save your interactions!');
@@ -182,10 +213,29 @@ export default function Explore({ onOpenAuthModal }) {
     }
   };
 
+  // 6. Compute Displayed List based on Active Personal Interaction Tab
+  let displayedAnimeList = animeList;
+  if (['likes', 'watchlist', 'dislikes'].includes(activeTab)) {
+    const targetSet = userInteractions[activeTab];
+    displayedAnimeList = animeList.filter(anime =>
+      getAnimeIds(anime).some(id => targetSet.has(id))
+    );
+  }
+
+  const getSectionTitle = () => {
+    if (searchQuery.trim() !== '') return `🔍 Search Results for "${searchQuery}"`;
+    if (selectedGenre !== '') return `🎭 ${selectedGenre} Anime`;
+    if (activeTab === 'top-rated') return '🔥 Top Rated Anime (Highest Score)';
+    if (activeTab === 'likes') return '❤️ My Liked Anime';
+    if (activeTab === 'watchlist') return '🔖 My Watchlist';
+    if (activeTab === 'dislikes') return '👎 My Disliked Anime';
+    return '🔍 Explore Full Catalog';
+  };
+
   return (
     <section id="explore" className="explore-container">
       {/* AI Personalized Recommendations Section */}
-      {recommendations.length > 0 && searchQuery === '' && selectedGenre === '' && (
+      {recommendations.length > 0 && searchQuery === '' && selectedGenre === '' && activeTab === 'all' && (
         <div style={{
           background: 'linear-gradient(135deg, rgba(20, 0, 36, 0.9), rgba(13, 2, 33, 0.9))',
           borderRadius: '20px',
@@ -194,7 +244,7 @@ export default function Explore({ onOpenAuthModal }) {
           boxShadow: '0 8px 24px rgba(255, 0, 204, 0.15)',
           marginBottom: '40px'
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
             <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.5rem', fontWeight: 800, color: '#ff80ff', display: 'flex', alignItems: 'center', gap: '8px' }}>
               {isAiPersonalized ? '✨ AI Personalized Picks for You' : '🎯 Recommended For You'}
             </h2>
@@ -222,26 +272,38 @@ export default function Explore({ onOpenAuthModal }) {
         </div>
       )}
 
-      {/* Catalog Search & Discovery Section */}
+      {/* Anchor Target for Top Rated */}
+      <div id="top-rated" />
+
+      {/* Catalog Search & Discovery Header */}
       <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.4rem', fontWeight: 700, marginBottom: '20px', color: '#fff' }}>
-        🔍 Explore Full Catalog
+        {getSectionTitle()}
       </h2>
 
       <div className="discovery-controls">
         <SearchBar
           searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          onClear={() => setSearchQuery('')}
+          setSearchQuery={handleSearchChange}
+          onClear={handleClearSearch}
         />
 
         <GenreFilter
           selectedGenre={selectedGenre}
-          setSelectedGenre={setSelectedGenre}
+          onSelectGenre={handleSelectGenre}
+          activeTab={activeTab}
+          onSelectTab={handleSelectTab}
+          isAuthenticated={!!user}
+          onOpenAuthModal={onOpenAuthModal}
+          userInteractionsCount={{
+            likes: userInteractions.likes.size,
+            watchlist: userInteractions.watchlist.size,
+            dislikes: userInteractions.dislikes.size
+          }}
         />
       </div>
 
       <AnimeGrid
-        animeList={animeList}
+        animeList={displayedAnimeList}
         loading={loading}
         error={error}
         onRetry={fetchAnime}

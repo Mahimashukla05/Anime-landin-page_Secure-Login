@@ -1,6 +1,18 @@
 import React from 'react';
 import AnimeCard from './AnimeCard';
 
+/**
+ * Safely normalizes and extracts all string ID representations for an anime object.
+ * Handles both MongoDB _id string/ObjectId and Jikan malId number/string.
+ */
+export function getAnimeIds(anime) {
+  if (!anime) return [];
+  const ids = [];
+  if (anime._id) ids.push(anime._id.toString());
+  if (anime.malId !== undefined && anime.malId !== null) ids.push(anime.malId.toString());
+  return ids;
+}
+
 export default function AnimeGrid({
   animeList,
   loading,
@@ -41,24 +53,26 @@ export default function AnimeGrid({
       <div className="state-container">
         <h3 className="state-title">🔍 No Anime Found</h3>
         <p className="state-message">
-          We couldn't find any anime matching your current search query or genre filter.
+          No anime items match your current selection or saved list.
         </p>
       </div>
     );
   }
 
-  // 4. Normal Grid Rendering
+  // 4. Normal Grid Rendering with dual ID matching
   return (
     <div className="anime-grid">
       {animeList.map((anime) => {
-        const id = anime._id || anime.malId;
-        const isLiked = userInteractions.likes.has(id.toString());
-        const isDisliked = userInteractions.dislikes.has(id.toString());
-        const isInWatchlist = userInteractions.watchlist.has(id.toString());
+        const idKey = anime._id || anime.malId;
+        const animeIds = getAnimeIds(anime);
+
+        const isLiked = animeIds.some(id => userInteractions.likes.has(id));
+        const isDisliked = animeIds.some(id => userInteractions.dislikes.has(id));
+        const isInWatchlist = animeIds.some(id => userInteractions.watchlist.has(id));
 
         return (
           <AnimeCard
-            key={id}
+            key={idKey}
             anime={anime}
             isLiked={isLiked}
             isDisliked={isDisliked}

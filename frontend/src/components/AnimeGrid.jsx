@@ -38,10 +38,10 @@ export default function AnimeGrid({
   if (error) {
     return (
       <div className="state-container">
-        <h3 className="state-title">⚠️ Failed to Load Anime Catalog</h3>
+        <h3 className="state-title">Failed to Load Anime Catalog</h3>
         <p className="state-message">{error}</p>
         <button className="btn-cta primary" onClick={onRetry}>
-          🔄 Retry Connection
+          Retry Connection
         </button>
       </div>
     );
@@ -51,7 +51,7 @@ export default function AnimeGrid({
   if (!animeList || animeList.length === 0) {
     return (
       <div className="state-container">
-        <h3 className="state-title">🔍 No Anime Found</h3>
+        <h3 className="state-title">No Anime Found</h3>
         <p className="state-message">
           No anime items match your current selection or saved list.
         </p>

@@ -223,38 +223,31 @@ export default function Explore({ onOpenAuthModal }) {
   }
 
   const getSectionTitle = () => {
-    if (searchQuery.trim() !== '') return `🔍 Search Results for "${searchQuery}"`;
-    if (selectedGenre !== '') return `🎭 ${selectedGenre} Anime`;
-    if (activeTab === 'top-rated') return '🔥 Top Rated Anime (Highest Score)';
-    if (activeTab === 'likes') return '❤️ My Liked Anime';
-    if (activeTab === 'watchlist') return '🔖 My Watchlist';
-    if (activeTab === 'dislikes') return '👎 My Disliked Anime';
-    return '🔍 Explore Full Catalog';
+    if (searchQuery.trim() !== '') return `Search Results for "${searchQuery}"`;
+    if (selectedGenre !== '') return `${selectedGenre} Anime`;
+    if (activeTab === 'top-rated') return 'Top Rated Anime';
+    if (activeTab === 'likes') return 'My Liked Anime';
+    if (activeTab === 'watchlist') return 'My Watchlist';
+    if (activeTab === 'dislikes') return 'My Disliked Anime';
+    return 'Explore Full Catalog';
   };
 
   return (
     <section id="explore" className="explore-container">
-      {/* AI Personalized Recommendations Section */}
+      {/* AI Personalized Recommendations Section with Soft Pastel #C8A0FA Background */}
       {recommendations.length > 0 && searchQuery === '' && selectedGenre === '' && activeTab === 'all' && (
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(20, 0, 36, 0.9), rgba(13, 2, 33, 0.9))',
-          borderRadius: '20px',
-          padding: '24px',
-          border: '1px solid rgba(255, 0, 204, 0.3)',
-          boxShadow: '0 8px 24px rgba(255, 0, 204, 0.15)',
-          marginBottom: '40px'
-        }}>
+        <div className="recommendations-card-container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
-            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.5rem', fontWeight: 800, color: '#ff80ff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {isAiPersonalized ? '✨ AI Personalized Picks for You' : '🎯 Recommended For You'}
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-main)' }}>
+              {isAiPersonalized ? 'AI Personalized Picks for You' : 'Recommended For You'}
             </h2>
-            <span style={{ fontSize: '0.8rem', background: 'rgba(255, 255, 255, 0.08)', padding: '4px 12px', borderRadius: '12px', color: '#a098b5' }}>
+            <span style={{ fontSize: '0.8rem', background: 'rgba(255, 255, 255, 0.5)', padding: '4px 12px', borderRadius: '12px', color: 'var(--text-muted)', fontWeight: 700 }}>
               {isAiPersonalized ? 'Powered by Gemini AI + DemoReco Engine' : 'Powered by DemoReco Scoring Engine'}
             </span>
           </div>
 
           {recommendationsIntro && (
-            <p style={{ fontSize: '0.95rem', color: '#e0d8f0', marginBottom: '20px', fontStyle: 'italic' }}>
+            <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', marginBottom: '20px', fontStyle: 'italic', fontWeight: 500 }}>
               "{recommendationsIntro}"
             </p>
           )}
@@ -275,8 +268,8 @@ export default function Explore({ onOpenAuthModal }) {
       {/* Anchor Target for Top Rated */}
       <div id="top-rated" />
 
-      {/* Catalog Search & Discovery Header */}
-      <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.4rem', fontWeight: 700, marginBottom: '20px', color: '#fff' }}>
+      {/* Center-Aligned Catalog Search & Discovery Header */}
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '24px', color: 'var(--text-main)', textAlign: 'center' }}>
         {getSectionTitle()}
       </h2>
 

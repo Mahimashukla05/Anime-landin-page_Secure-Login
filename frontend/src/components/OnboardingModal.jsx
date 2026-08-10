@@ -12,12 +12,12 @@ const GENRE_OPTIONS = [
 ];
 
 const EXPERIENCE_OPTIONS = [
-  { id: 'Light & Funny', label: '😂 Light & Funny', desc: 'Uplifting humor and cheerful vibes' },
-  { id: 'Emotional', label: '😭 Emotional', desc: 'Heart-wrenching stories and deep character drama' },
-  { id: 'Dark & Serious', label: '🔥 Dark & Serious', desc: 'High stakes, psychological thrillers, and intense themes' },
-  { id: 'Adventure', label: '🗺️ Adventure', desc: 'World building, questing, and grand exploration' },
-  { id: 'Short & Fast-paced', label: '⚡ Short & Fast-paced', desc: 'Bingeable 12-24 episode series with non-stop action' },
-  { id: 'Long Journey', label: '🌟 Long Journey', desc: 'Epics with multi-season character growth' }
+  { id: 'Light & Funny', label: 'Light & Funny', desc: 'Uplifting humor and cheerful vibes' },
+  { id: 'Emotional', label: 'Emotional', desc: 'Heart-wrenching stories and deep character drama' },
+  { id: 'Dark & Serious', label: 'Dark & Serious', desc: 'High stakes, psychological thrillers, and intense themes' },
+  { id: 'Adventure', label: 'Adventure', desc: 'World building, questing, and grand exploration' },
+  { id: 'Short & Fast-paced', label: 'Short & Fast-paced', desc: 'Bingeable 12-24 episode series with non-stop action' },
+  { id: 'Long Journey', label: 'Long Journey', desc: 'Epics with multi-season character growth' }
 ];
 
 export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
@@ -156,19 +156,18 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
   return (
     <div className="auth-modal" onClick={onClose}>
       <div className="auth-box" style={{ maxWidth: '620px' }} onClick={(e) => e.stopPropagation()}>
-        <span className="close-btn" onClick={onClose} title="Close">✕</span>
+        <span className="close-btn" onClick={onClose} title="Close">×</span>
 
-        {/* Step Progress Bar Indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
+        {/* Clean Step Progress Indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '16px' }}>
           {[1, 2, 3].map(i => (
             <div
               key={i}
               style={{
-                height: '6px',
+                height: '5px',
                 borderRadius: '3px',
-                width: i === step ? '32px' : '16px',
-                background: i <= step ? 'linear-gradient(90deg, #a855f7, #ec4899)' : 'rgba(255, 255, 255, 0.12)',
-                boxShadow: i <= step ? '0 0 10px rgba(236, 72, 153, 0.5)' : 'none',
+                width: i === step ? '30px' : '14px',
+                background: i <= step ? 'var(--purple-accent)' : 'var(--border-subtle)',
                 transition: 'all 200ms ease'
               }}
             />
@@ -177,27 +176,23 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
 
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <span style={{
-            fontSize: '0.78rem',
-            fontWeight: 700,
+            fontSize: '0.75rem',
+            fontWeight: 800,
             textTransform: 'uppercase',
             letterSpacing: '1px',
-            color: '#ff80ff',
-            background: 'rgba(255, 0, 204, 0.15)',
-            padding: '4px 14px',
-            borderRadius: '12px',
-            border: '1px solid rgba(255, 0, 204, 0.3)'
+            color: 'var(--purple-accent)',
+            background: 'var(--surface-subtle)',
+            padding: '4px 12px',
+            borderRadius: '10px',
+            border: '1px solid var(--border-medium)'
           }}>
             Step {step} of 3
           </span>
           <h2 style={{
-            fontFamily: 'Outfit, sans-serif',
-            fontSize: '1.45rem',
+            fontSize: '1.4rem',
             fontWeight: 800,
             marginTop: '10px',
-            color: '#fff',
-            background: 'linear-gradient(to right, #ffffff, #ff80ff)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
+            color: 'var(--text-main)'
           }}>
             {step === 1 && 'Pick 3 Anime You Already Love'}
             {step === 2 && 'Which Genres Do You Enjoy?'}
@@ -207,16 +202,17 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
 
         {error && (
           <div style={{
-            background: 'rgba(255, 0, 100, 0.15)',
-            border: '1px solid rgba(255, 0, 100, 0.5)',
+            background: 'rgba(217, 83, 79, 0.1)',
+            border: '1px solid rgba(217, 83, 79, 0.3)',
             padding: '10px 14px',
-            borderRadius: '12px',
-            color: '#ff80aa',
+            borderRadius: 'var(--radius-md)',
+            color: '#D9534F',
             fontSize: '0.85rem',
             marginBottom: '16px',
-            textAlign: 'center'
+            textAlign: 'center',
+            fontWeight: 700
           }}>
-            ⚠️ {error}
+            {error}
           </div>
         )}
 
@@ -237,23 +233,22 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px', minHeight: '36px' }}>
               {selectedAnime.map(item => (
                 <span key={item.id} style={{
-                  background: 'linear-gradient(135deg, #ec4899, #a855f7)',
+                  background: 'var(--purple-accent)',
                   color: 'white',
-                  padding: '5px 12px',
-                  borderRadius: '16px',
+                  padding: '4px 10px',
+                  borderRadius: '14px',
                   fontSize: '0.8rem',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  boxShadow: '0 0 10px rgba(236, 72, 153, 0.4)'
+                  gap: '6px'
                 }}>
                   {item.title}
-                  <button onClick={() => toggleAnimeSelection(item)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
+                  <button onClick={() => toggleAnimeSelection(item)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}>×</button>
                 </span>
               ))}
               {selectedAnime.length < 3 && (
-                <span style={{ fontSize: '0.8rem', color: '#a098b5', alignSelf: 'center' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', alignSelf: 'center', fontWeight: 600 }}>
                   ({3 - selectedAnime.length} more selection required)
                 </span>
               )}
@@ -269,7 +264,7 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
               paddingRight: '4px'
             }}>
               {searching ? (
-                <p style={{ color: '#a098b5', gridColumn: 'span 4', textAlign: 'center', padding: '20px' }}>Searching anime...</p>
+                <p style={{ color: 'var(--text-muted)', gridColumn: 'span 4', textAlign: 'center', padding: '20px', fontWeight: 600 }}>Searching anime...</p>
               ) : searchResults.map(anime => {
                 const isSel = selectedAnime.some(item => item.id === (anime._id || anime.malId).toString());
                 return (
@@ -277,13 +272,12 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
                     key={anime._id || anime.malId}
                     onClick={() => toggleAnimeSelection(anime)}
                     style={{
-                      border: isSel ? '2px solid #ec4899' : '1px solid rgba(255, 255, 255, 0.12)',
-                      borderRadius: '12px',
+                      border: isSel ? '2px solid var(--purple-accent)' : '1px solid var(--border-subtle)',
+                      borderRadius: 'var(--radius-md)',
                       overflow: 'hidden',
                       cursor: 'pointer',
-                      background: isSel ? 'rgba(236, 72, 153, 0.25)' : 'rgba(30, 15, 55, 0.5)',
-                      boxShadow: isSel ? '0 0 14px rgba(236, 72, 153, 0.5)' : 'none',
-                      transition: 'all 0.2s ease',
+                      background: isSel ? 'var(--surface-subtle)' : 'var(--surface-card)',
+                      transition: 'all 0.18s ease',
                       position: 'relative'
                     }}
                   >
@@ -292,11 +286,11 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
                       alt={anime.title}
                       style={{ width: '100%', height: '110px', objectFit: 'cover' }}
                     />
-                    <div style={{ padding: '6px', fontSize: '0.75rem', fontWeight: 600, color: isSel ? '#ff80ff' : '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div style={{ padding: '6px', fontSize: '0.75rem', fontWeight: 700, color: isSel ? 'var(--purple-accent)' : 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {anime.title}
                     </div>
                     {isSel && (
-                      <div style={{ position: 'absolute', top: 4, right: 4, background: '#ec4899', color: 'white', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 'bold' }}>✓</div>
+                      <div style={{ position: 'absolute', top: 4, right: 4, background: 'var(--purple-accent)', color: 'white', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 'bold' }}>✓</div>
                     )}
                   </div>
                 );
@@ -308,11 +302,11 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
         {/* STEP 2: Preferred Genres */}
         {step === 2 && (
           <div>
-            <p style={{ fontSize: '0.88rem', color: '#a098b5', marginBottom: '16px', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '16px', textAlign: 'center', fontWeight: 600 }}>
               Select at least 1 genre you love watching.
             </p>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center', maxHeight: '260px', overflowY: 'auto', padding: '4px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', maxHeight: '260px', overflowY: 'auto', padding: '4px' }}>
               {GENRE_OPTIONS.map(genre => {
                 const isSel = selectedGenres.includes(genre);
                 return (
@@ -320,14 +314,15 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
                     key={genre}
                     onClick={() => toggleGenre(genre)}
                     style={{
-                      padding: '9px 18px',
-                      borderRadius: '20px',
-                      border: isSel ? 'none' : '1px solid rgba(255, 255, 255, 0.15)',
-                      background: isSel ? 'linear-gradient(135deg, #a855f7, #ec4899)' : 'rgba(30, 15, 55, 0.6)',
-                      color: 'white',
-                      fontWeight: isSel ? 700 : 500,
+                      padding: '8px 16px',
+                      borderRadius: 'var(--radius-sm)',
+                      border: isSel ? 'none' : '1px solid var(--border-subtle)',
+                      background: isSel ? 'var(--purple-accent)' : 'var(--surface-card)',
+                      color: isSel ? '#FFFFFF' : 'var(--text-main)',
+                      fontWeight: 700,
+                      fontFamily: 'Nunito, sans-serif',
+                      fontSize: '0.88rem',
                       cursor: 'pointer',
-                      boxShadow: isSel ? '0 0 14px rgba(236, 72, 153, 0.5)' : 'none',
                       transition: 'all 0.18s ease'
                     }}
                   >
@@ -342,7 +337,7 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
         {/* STEP 3: Experience / Mood Selection */}
         {step === 3 && (
           <div>
-            <p style={{ fontSize: '0.88rem', color: '#a098b5', marginBottom: '16px', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '16px', textAlign: 'center', fontWeight: 600 }}>
               Select the mood or experience you want DemoReco to prioritize.
             </p>
 
@@ -355,18 +350,17 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
                     onClick={() => toggleExperience(exp.id)}
                     style={{
                       padding: '12px 14px',
-                      borderRadius: '14px',
-                      border: isSel ? '2px solid #ec4899' : '1px solid rgba(255, 255, 255, 0.12)',
-                      background: isSel ? 'rgba(236, 72, 153, 0.2)' : 'rgba(30, 15, 55, 0.5)',
-                      boxShadow: isSel ? '0 0 14px rgba(236, 72, 153, 0.35)' : 'none',
+                      borderRadius: 'var(--radius-md)',
+                      border: isSel ? '2px solid var(--purple-accent)' : '1px solid var(--border-subtle)',
+                      background: isSel ? 'var(--surface-subtle)' : 'var(--surface-card)',
                       cursor: 'pointer',
                       transition: 'all 0.18s ease'
                     }}
                   >
-                    <div style={{ fontWeight: 700, color: isSel ? '#ff80ff' : '#fff', fontSize: '0.92rem', marginBottom: '4px' }}>
+                    <div style={{ fontWeight: 800, color: isSel ? 'var(--purple-accent)' : 'var(--text-main)', fontSize: '0.9rem', marginBottom: '4px' }}>
                       {exp.label}
                     </div>
-                    <div style={{ fontSize: '0.78rem', color: '#a098b5', lineHeight: 1.35 }}>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.35, fontWeight: 500 }}>
                       {exp.desc}
                     </div>
                   </div>
@@ -377,10 +371,10 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
         )}
 
         {/* Modal Wizard Navigation */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '22px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '22px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
           {step > 1 ? (
             <button className="btn-auth" onClick={() => setStep(step - 1)}>
-              ← Back
+              Back
             </button>
           ) : <div />}
 
@@ -396,7 +390,7 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
                 opacity: (step === 1 && selectedAnime.length !== 3) || (step === 2 && selectedGenres.length === 0) ? 0.5 : 1
               }}
             >
-              Next →
+              Next
             </button>
           ) : (
             <button
@@ -407,7 +401,7 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
                 opacity: selectedExperiences.length === 0 || submitting ? 0.5 : 1
               }}
             >
-              {submitting ? 'Saving...' : '✨ Complete Setup'}
+              {submitting ? 'Saving...' : 'Complete Setup'}
             </button>
           )}
         </div>

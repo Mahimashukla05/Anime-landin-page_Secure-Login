@@ -33,51 +33,42 @@ export default function GenreFilter({
   };
 
   return (
-    <div id="genres" className="genre-filter-section" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {/* 1. Main Category & Personal View Tabs */}
-      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+    <div id="genres" className="genre-filter-section">
+      {/* 1. Category & Personal View Tabs */}
+      <div className="genre-filter-container" style={{ marginBottom: '6px' }}>
         <button
           className={`genre-pill ${activeTab === 'all' && selectedGenre === '' ? 'active' : ''}`}
           onClick={() => handleTabClick('all')}
         >
-          🌐 All Catalog
+          All Catalog
         </button>
 
         <button
           className={`genre-pill ${activeTab === 'top-rated' ? 'active' : ''}`}
           onClick={() => handleTabClick('top-rated')}
         >
-          🔥 Top Rated
+          Top Rated
         </button>
 
         <button
           className={`genre-pill ${activeTab === 'likes' ? 'active' : ''}`}
           onClick={() => handleTabClick('likes')}
-          style={{
-            borderColor: activeTab === 'likes' ? '#ec4899' : undefined
-          }}
         >
-          ❤️ My Likes {userInteractionsCount.likes > 0 ? `(${userInteractionsCount.likes})` : ''}
+          My Likes {userInteractionsCount.likes > 0 ? `(${userInteractionsCount.likes})` : ''}
         </button>
 
         <button
           className={`genre-pill ${activeTab === 'watchlist' ? 'active' : ''}`}
           onClick={() => handleTabClick('watchlist')}
-          style={{
-            borderColor: activeTab === 'watchlist' ? '#00f2fe' : undefined
-          }}
         >
-          🔖 My Watchlist {userInteractionsCount.watchlist > 0 ? `(${userInteractionsCount.watchlist})` : ''}
+          My Watchlist {userInteractionsCount.watchlist > 0 ? `(${userInteractionsCount.watchlist})` : ''}
         </button>
 
         <button
           className={`genre-pill ${activeTab === 'dislikes' ? 'active' : ''}`}
           onClick={() => handleTabClick('dislikes')}
-          style={{
-            borderColor: activeTab === 'dislikes' ? '#ff4444' : undefined
-          }}
         >
-          👎 My Disliked {userInteractionsCount.dislikes > 0 ? `(${userInteractionsCount.dislikes})` : ''}
+          My Disliked {userInteractionsCount.dislikes > 0 ? `(${userInteractionsCount.dislikes})` : ''}
         </button>
       </div>
 

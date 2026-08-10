@@ -28,7 +28,7 @@ export default function Navbar({ onOpenAuthModal, onOpenOnboardingModal }) {
 
   return (
     <header className="navbar">
-      <a href="#" className="logo">DemoReco</a>
+      <a href="#" className="logo">Demo<span>Reco</span></a>
 
       <div className="nav-actions">
         {user ? (
@@ -43,8 +43,8 @@ export default function Navbar({ onOpenAuthModal, onOpenOnboardingModal }) {
 
             {showDropdown && (
               <ul className="dropdown-menu">
-                <li style={{ padding: '10px 18px', color: '#ff80ff', fontSize: '0.85rem', fontWeight: 700, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                  👤 {user.username}
+                <li style={{ padding: '10px 18px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: 800, borderBottom: '1px solid var(--border-subtle)' }}>
+                  User: {user.username}
                 </li>
                 <li>
                   <button
@@ -52,20 +52,20 @@ export default function Navbar({ onOpenAuthModal, onOpenOnboardingModal }) {
                       setShowDropdown(false);
                       onOpenOnboardingModal();
                     }}
-                    style={{ color: '#00f2fe' }}
+                    style={{ color: 'var(--purple-accent)' }}
                   >
-                    ⚙️ Edit Preferences
+                    Edit Preferences
                   </button>
                 </li>
-                <li style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <li style={{ borderTop: '1px solid var(--border-subtle)' }}>
                   <button
                     onClick={() => {
                       setShowDropdown(false);
                       logout();
                     }}
-                    style={{ color: '#ff4444' }}
+                    style={{ color: '#D9534F' }}
                   >
-                    🚪 Logout
+                    Logout
                   </button>
                 </li>
               </ul>

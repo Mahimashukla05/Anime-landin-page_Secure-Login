@@ -13,10 +13,10 @@ export default function AnimeCard({
   const [loadingAction, setLoadingAction] = useState(null); // 'like', 'dislike', 'watchlist', or null
 
   const posterUrl = imageError || !anime.poster 
-    ? 'https://via.placeholder.com/300x450/140024/ffffff?text=Anime+Poster'
+    ? 'https://via.placeholder.com/300x450/FAF8FC/6E618A?text=Anime+Poster'
     : anime.poster;
 
-  const scoreText = anime.score ? `★ ${anime.score}` : '★ N/A';
+  const scoreText = anime.score ? `Score: ${anime.score}` : 'N/A';
   const genresList = (anime.genres || []).slice(0, 3).join(' • ');
 
   const handleAction = async (e, action) => {
@@ -74,51 +74,48 @@ export default function AnimeCard({
           </div>
 
           <div className="overlay-actions">
+            {/* Like Icon Button */}
             <button 
-              className={`btn-action ${isLiked ? 'active' : ''}`} 
+              className={`btn-icon-action ${isLiked ? 'active-like' : ''}`} 
               onClick={(e) => handleAction(e, 'like')}
               disabled={loadingAction !== null}
-              title="Like this anime"
-              style={{
-                background: isLiked ? 'linear-gradient(135deg, #ff00cc, #9900ff)' : undefined,
-                borderColor: isLiked ? '#ff00cc' : undefined
-              }}
+              title={isLiked ? 'Remove Like' : 'Like this anime'}
             >
-              {loadingAction === 'like' ? '⏳...' : isLiked ? '❤️ Liked' : '🤍 Like'}
+              <svg width="15" height="15" viewBox="0 0 24 24" fill={isLiked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
             </button>
 
+            {/* Watchlist Icon Button */}
             <button 
-              className={`btn-action ${isDisliked ? 'active' : ''}`} 
-              onClick={(e) => handleAction(e, 'dislike')}
-              disabled={loadingAction !== null}
-              title="Dislike this anime"
-              style={{
-                background: isDisliked ? 'rgba(255, 68, 68, 0.4)' : undefined,
-                borderColor: isDisliked ? '#ff4444' : undefined
-              }}
-            >
-              {loadingAction === 'dislike' ? '⏳...' : isDisliked ? '👎 Disliked' : '👎 Dislike'}
-            </button>
-
-            <button 
-              className={`btn-action ${isInWatchlist ? 'active' : ''}`} 
+              className={`btn-icon-action ${isInWatchlist ? 'active-watchlist' : ''}`} 
               onClick={(e) => handleAction(e, 'watchlist')}
               disabled={loadingAction !== null}
-              title="Add to Watchlist"
-              style={{
-                background: isInWatchlist ? 'linear-gradient(135deg, #00f2fe, #4facfe)' : undefined,
-                borderColor: isInWatchlist ? '#00f2fe' : undefined,
-                color: isInWatchlist ? '#000' : undefined
-              }}
+              title={isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
             >
-              {loadingAction === 'watchlist' ? '⏳...' : isInWatchlist ? '🔖 Saved' : '🔖 Watchlist'}
+              <svg width="15" height="15" viewBox="0 0 24 24" fill={isInWatchlist ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
             </button>
 
+            {/* Dislike Icon Button */}
             <button 
-              className="btn-action details" 
+              className={`btn-icon-action ${isDisliked ? 'active-dislike' : ''}`} 
+              onClick={(e) => handleAction(e, 'dislike')}
+              disabled={loadingAction !== null}
+              title={isDisliked ? 'Remove Dislike' : 'Dislike this anime'}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill={isDisliked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4.33v6.67a2.31 2.31 0 0 1-2.33 2.33H17"></path>
+              </svg>
+            </button>
+
+            {/* View Details Button */}
+            <button 
+              className="btn-details-text" 
               onClick={handleDetails}
             >
-              🔍 View Details
+              Details
             </button>
           </div>
         </div>

@@ -74,7 +74,7 @@ function MainApp() {
         onClose={() => setOnboardingModalOpen(false)}
         onSuccess={() => {
           setHasCompletedOnboarding(true);
-          alert('🎉 Anime preferences saved successfully! Enjoy your personalized discovery.');
+          alert('Anime preferences saved successfully! Enjoy your personalized discovery.');
         }}
       />
     </div>

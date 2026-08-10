@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import SearchBar from '../components/SearchBar';
 import GenreFilter from '../components/GenreFilter';
 import AnimeGrid, { getAnimeIds } from '../components/AnimeGrid';
+import AnimeCard from '../components/AnimeCard';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 
@@ -11,6 +12,7 @@ const API_RECOMMENDATIONS_URL = `${API_BASE_URL}/recommendations`;
 
 export default function Explore({ onOpenAuthModal }) {
   const { user, fetchWithAuth } = useAuth();
+  const recsCarouselRef = useRef(null);
 
   const [animeList, setAnimeList] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
@@ -35,13 +37,13 @@ export default function Explore({ onOpenAuthModal }) {
   const fetchRecommendations = useCallback(async () => {
     setLoadingRecs(true);
     try {
-      let url = `${API_RECOMMENDATIONS_URL}?personalized=true&limit=6`;
+      let url = `${API_RECOMMENDATIONS_URL}?personalized=true&limit=10`;
       let res;
 
       if (user) {
         res = await fetchWithAuth(url);
       } else {
-        res = await fetch(`${API_RECOMMENDATIONS_URL}?limit=6`);
+        res = await fetch(`${API_RECOMMENDATIONS_URL}?limit=10`);
       }
 
       if (res.ok) {
@@ -56,6 +58,21 @@ export default function Explore({ onOpenAuthModal }) {
       setLoadingRecs(false);
     }
   }, [user, fetchWithAuth]);
+
+  // Next Recommendations Horizontal Scroll Navigation
+  const handleNextRecommendations = () => {
+    if (recsCarouselRef.current) {
+      const container = recsCarouselRef.current;
+      const scrollAmount = container.clientWidth * 0.75;
+      
+      if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 15) {
+        // Loop back smoothly to start when reaching the end
+        container.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
+    }
+  };
 
   // 2. Fetch Anime Catalog
   const fetchAnime = useCallback(async () => {
@@ -234,34 +251,52 @@ export default function Explore({ onOpenAuthModal }) {
 
   return (
     <section id="explore" className="explore-container">
-      {/* AI Personalized Recommendations Section with Soft Pastel #C8A0FA Background */}
+      {/* AI Personalized Recommendations Section with Single Horizontal Row & Next Button */}
       {recommendations.length > 0 && searchQuery === '' && selectedGenre === '' && activeTab === 'all' && (
-        <div className="recommendations-card-container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-main)' }}>
-              {isAiPersonalized ? 'AI Personalized Picks for You' : 'Recommended For You'}
-            </h2>
-            <span style={{ fontSize: '0.8rem', background: 'rgba(255, 255, 255, 0.5)', padding: '4px 12px', borderRadius: '12px', color: 'var(--text-muted)', fontWeight: 700 }}>
-              {isAiPersonalized ? 'Powered by Gemini AI + DemoReco Engine' : 'Powered by DemoReco Scoring Engine'}
-            </span>
+        <div className="recommendations-carousel-section">
+          <div className="recs-header">
+            <div>
+              <h2 className="recs-title">
+                {isAiPersonalized ? 'AI Personalized Picks for You' : 'Personalized Recommendations'}
+              </h2>
+              {recommendationsIntro && (
+                <p className="recs-intro">"{recommendationsIntro}"</p>
+              )}
+            </div>
+
+            <button className="btn-recs-next" onClick={handleNextRecommendations}>
+              <span>Next</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
           </div>
 
-          {recommendationsIntro && (
-            <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', marginBottom: '20px', fontStyle: 'italic', fontWeight: 500 }}>
-              "{recommendationsIntro}"
-            </p>
-          )}
+          {/* Single Row Horizontal Carousel */}
+          <div className="recs-carousel-track" ref={recsCarouselRef}>
+            {recommendations.map((anime) => {
+              const idKey = anime._id || anime.malId;
+              const animeIds = getAnimeIds(anime);
+              const isLiked = animeIds.some(id => userInteractions.likes.has(id));
+              const isDisliked = animeIds.some(id => userInteractions.dislikes.has(id));
+              const isInWatchlist = animeIds.some(id => userInteractions.watchlist.has(id));
 
-          <AnimeGrid
-            animeList={recommendations}
-            loading={loadingRecs}
-            error={null}
-            onRetry={fetchRecommendations}
-            userInteractions={userInteractions}
-            onToggleInteraction={handleToggleInteraction}
-            onOpenAuthModal={onOpenAuthModal}
-            isAuthenticated={!!user}
-          />
+              return (
+                <div key={idKey} className="recs-card-item">
+                  <AnimeCard
+                    anime={anime}
+                    isLiked={isLiked}
+                    isDisliked={isDisliked}
+                    isInWatchlist={isInWatchlist}
+                    onToggleInteraction={handleToggleInteraction}
+                    onOpenAuthModal={onOpenAuthModal}
+                    isAuthenticated={!!user}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -269,7 +304,7 @@ export default function Explore({ onOpenAuthModal }) {
       <div id="top-rated" />
 
       {/* Center-Aligned Catalog Search & Discovery Header */}
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '24px', color: 'var(--text-main)', textAlign: 'center' }}>
+      <h2 style={{ fontSize: '1.45rem', fontWeight: 900, marginBottom: '20px', color: 'var(--text-main)', textAlign: 'center' }}>
         {getSectionTitle()}
       </h2>
 

@@ -1,133 +1,212 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
-// Verified, high-reliability fallback poster URLs
-const FALLBACK_POSTERS = [
-  'https://cdn.myanimelist.net/images/anime/1208/94745.jpg',
-  'https://cdn.myanimelist.net/images/anime/1935/127974.jpg',
-  'https://cdn.myanimelist.net/images/anime/1308/90061.jpg',
-  'https://cdn.myanimelist.net/images/anime/9/9444.jpg',
-  'https://cdn.myanimelist.net/images/anime/6/73245.jpg',
-  'https://cdn.myanimelist.net/images/anime/1565/111305.jpg'
-];
-
-const DEFAULT_HERO_ANIME = [
-  { id: 'h1', title: 'Fullmetal Alchemist: Brotherhood', poster: FALLBACK_POSTERS[0] },
-  { id: 'h2', title: 'Steins;Gate', poster: FALLBACK_POSTERS[1] },
-  { id: 'h3', title: 'Hunter x Hunter', poster: FALLBACK_POSTERS[2] },
-  { id: 'h4', title: 'Death Note', poster: FALLBACK_POSTERS[3] },
-  { id: 'h5', title: 'One Piece', poster: FALLBACK_POSTERS[4] },
-  { id: 'h6', title: 'Naruto Shippuden', poster: FALLBACK_POSTERS[5] }
+// Verified, high-reliability MAL poster candidate URLs
+const FALLBACK_CANDIDATES = [
+  { id: 'f1', title: 'Fullmetal Alchemist: Brotherhood', poster: 'https://cdn.myanimelist.net/images/anime/1208/94745.jpg' },
+  { id: 'f2', title: 'Steins;Gate', poster: 'https://cdn.myanimelist.net/images/anime/1935/127974.jpg' },
+  { id: 'f3', title: 'Hunter x Hunter', poster: 'https://cdn.myanimelist.net/images/anime/1308/90061.jpg' },
+  { id: 'f4', title: 'Death Note', poster: 'https://cdn.myanimelist.net/images/anime/9/9444.jpg' },
+  { id: 'f5', title: 'One Piece', poster: 'https://cdn.myanimelist.net/images/anime/6/73245.jpg' },
+  { id: 'f6', title: 'Naruto Shippuden', poster: 'https://cdn.myanimelist.net/images/anime/1565/111305.jpg' }
 ];
 
 export default function Hero({ featuredAnime = [] }) {
-  // Combine catalog items with fallback defaults if catalog list is empty
-  const rawCards = featuredAnime && featuredAnime.length >= 3 ? featuredAnime : DEFAULT_HERO_ANIME;
-  
-  // Normalize card objects with safe fallback posters
-  const cards = rawCards.map((anime, idx) => ({
-    id: anime._id || anime.malId || anime.id || `card-${idx}`,
-    title: anime.title || 'Featured Anime',
-    poster: anime.poster && anime.poster.trim() !== '' ? anime.poster : FALLBACK_POSTERS[idx % FALLBACK_POSTERS.length]
-  }));
-
+  const [validCards, setValidCards] = useState([]);
   const [centerIndex, setCenterIndex] = useState(0);
-  const [loadedImages, setLoadedImages] = useState({});
-  const [failedImages, setFailedImages] = useState({});
+  const [isHovered, setIsHovered] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
-  // 1. Preload hero poster images immediately on mount/data change
+  // Strict Image Preloading Pipeline: Only include verified loaded posters
   useEffect(() => {
-    cards.forEach((anime, idx) => {
-      if (anime.poster) {
-        const img = new Image();
-        img.src = anime.poster;
-        img.onload = () => {
-          setLoadedImages(prev => ({ ...prev, [anime.id]: true }));
-        };
-        img.onerror = () => {
-          // If primary poster fails, fallback to secondary verified URL
-          setFailedImages(prev => ({ ...prev, [anime.id]: FALLBACK_POSTERS[idx % FALLBACK_POSTERS.length] }));
-          setLoadedImages(prev => ({ ...prev, [anime.id]: true }));
-        };
-      }
+    let isMounted = true;
+    const candidates = (featuredAnime && featuredAnime.length >= 3) ? featuredAnime : FALLBACK_CANDIDATES;
+
+    const validatedList = [];
+    let checkedCount = 0;
+
+    candidates.forEach((anime, idx) => {
+      const posterUrl = (anime.poster && anime.poster.trim() !== '') 
+        ? anime.poster 
+        : FALLBACK_CANDIDATES[idx % FALLBACK_CANDIDATES.length].poster;
+
+      const img = new Image();
+      img.src = posterUrl;
+
+      img.onload = () => {
+        if (isMounted) {
+          validatedList.push({
+            id: anime._id || anime.malId || anime.id || `card-${idx}`,
+            title: anime.title || 'Featured Anime',
+            poster: posterUrl
+          });
+          checkedCount++;
+          if (checkedCount === candidates.length || validatedList.length >= 5) {
+            setValidCards([...validatedList]);
+            setIsInitializing(false);
+          }
+        }
+      };
+
+      img.onerror = () => {
+        if (isMounted) {
+          const backupUrl = FALLBACK_CANDIDATES[idx % FALLBACK_CANDIDATES.length].poster;
+          const backupImg = new Image();
+          backupImg.src = backupUrl;
+          backupImg.onload = () => {
+            if (isMounted) {
+              validatedList.push({
+                id: anime._id || anime.malId || anime.id || `card-${idx}`,
+                title: anime.title || 'Featured Anime',
+                poster: backupUrl
+              });
+              checkedCount++;
+              if (checkedCount === candidates.length || validatedList.length >= 5) {
+                setValidCards([...validatedList]);
+                setIsInitializing(false);
+              }
+            }
+          };
+          backupImg.onerror = () => {
+            if (isMounted) {
+              checkedCount++;
+              if (checkedCount === candidates.length) {
+                setValidCards([...validatedList]);
+                setIsInitializing(false);
+              }
+            }
+          };
+        }
+      };
     });
-  }, [cards]);
 
-  // 2. Smooth automatic 3-card rotation every 4.5 seconds
+    return () => { isMounted = false; };
+  }, [featuredAnime]);
+
+  // Auto-rotation (pauses on mouse hover)
   useEffect(() => {
+    if (validCards.length < 3 || isHovered) return;
+
     const timer = setInterval(() => {
-      setCenterIndex((prev) => (prev + 1) % cards.length);
+      setCenterIndex((prev) => (prev + 1) % validCards.length);
     }, 4500);
+
     return () => clearInterval(timer);
-  }, [cards.length]);
+  }, [validCards.length, isHovered]);
 
-  const leftIndex = (centerIndex - 1 + cards.length) % cards.length;
-  const rightIndex = (centerIndex + 1) % cards.length;
+  const handlePrev = useCallback(() => {
+    if (validCards.length === 0) return;
+    setCenterIndex((prev) => (prev - 1 + validCards.length) % validCards.length);
+  }, [validCards.length]);
 
-  const leftAnime = cards[leftIndex];
-  const centerAnime = cards[centerIndex];
-  const rightAnime = cards[rightIndex];
+  const handleNext = useCallback(() => {
+    if (validCards.length === 0) return;
+    setCenterIndex((prev) => (prev + 1) % validCards.length);
+  }, [validCards.length]);
 
-  const handleImageLoad = (id) => {
-    setLoadedImages(prev => ({ ...prev, [id]: true }));
-  };
-
-  const handleImageError = (id, fallbackUrl) => {
-    setFailedImages(prev => ({ ...prev, [id]: fallbackUrl }));
-    setLoadedImages(prev => ({ ...prev, [id]: true }));
-  };
-
-  const renderCardImage = (anime, fallbackIndex) => {
-    const isLoaded = loadedImages[anime.id];
-    const displaySrc = failedImages[anime.id] || anime.poster;
-
+  if (isInitializing || validCards.length < 3) {
     return (
-      <>
-        {/* Subtle Pastel Skeleton Loader (Option A/B strategy) */}
-        {!isLoaded && (
-          <div className="hero-card-skeleton" />
-        )}
-        <img
-          src={displaySrc}
-          alt={anime.title}
-          loading="eager"
-          decoding="async"
-          onLoad={() => handleImageLoad(anime.id)}
-          onError={() => handleImageError(anime.id, FALLBACK_POSTERS[fallbackIndex % FALLBACK_POSTERS.length])}
-          style={{
-            opacity: isLoaded ? 1 : 0,
-            transition: 'opacity 300ms ease',
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block'
-          }}
-        />
-      </>
+      <section className="hero-showcase-section">
+        <div className="hero-cloud-blob cloud-1" />
+        <div className="hero-cloud-blob cloud-2" />
+        <div className="showcase-container">
+          <div className="coverflow-stage-wrapper" style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <div className="hero-card-skeleton" style={{ width: '280px', height: '410px', borderRadius: '22px' }} />
+          </div>
+          <div className="hero-text-block">
+            <h1 className="hero-title">Find Your Next Anime Obsession</h1>
+          </div>
+        </div>
+      </section>
     );
-  };
+  }
+
+  const len = validCards.length;
+  const farLeftIdx = (centerIndex - 2 + len) % len;
+  const leftIdx = (centerIndex - 1 + len) % len;
+  const rightIdx = (centerIndex + 1) % len;
+  const farRightIdx = (centerIndex + 2) % len;
+
+  const visibleSlots = [
+    { posClass: 'card-far-left', anime: validCards[farLeftIdx] },
+    { posClass: 'card-left', anime: validCards[leftIdx] },
+    { posClass: 'card-center', anime: validCards[centerIndex] },
+    { posClass: 'card-right', anime: validCards[rightIdx] },
+    { posClass: 'card-far-right', anime: validCards[farRightIdx] }
+  ];
 
   return (
     <section className="hero-showcase-section">
+      {/* Soft Decorative Translucent Cloud Blobs */}
+      <div className="hero-cloud-blob cloud-1" />
+      <div className="hero-cloud-blob cloud-2" />
+      <div className="hero-cloud-blob cloud-3" />
+
       <div className="showcase-container">
-        {/* Three Large Overlapping Rotating Cards */}
-        <div className="showcase-stage">
-          <div className="showcase-card card-left">
-            {renderCardImage(leftAnime, leftIndex)}
+        {/* Coverflow Stage with Hover Pause Listener */}
+        <div
+          className="coverflow-stage-wrapper"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <button
+            className="coverflow-arrow arrow-left"
+            onClick={handlePrev}
+            title="Previous Anime"
+            aria-label="Previous Anime"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <div className="coverflow-stage">
+            {visibleSlots.map(({ posClass, anime }) => (
+              <div key={anime.id} className={`coverflow-card ${posClass}`}>
+                <img
+                  src={anime.poster}
+                  alt=""
+                  loading="eager"
+                  decoding="async"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block'
+                  }}
+                />
+              </div>
+            ))}
           </div>
 
-          <div className="showcase-card card-center">
-            {renderCardImage(centerAnime, centerIndex)}
-          </div>
-
-          <div className="showcase-card card-right">
-            {renderCardImage(rightAnime, rightIndex)}
-          </div>
+          <button
+            className="coverflow-arrow arrow-right"
+            onClick={handleNext}
+            title="Next Anime"
+            aria-label="Next Anime"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
         </div>
 
-        {/* Centered Hero Heading */}
-        <h1 className="hero-showcase-title">
-          Find Your Next Anime Obsession
-        </h1>
+        {/* Carousel Indicator Dots */}
+        <div className="coverflow-dots">
+          {validCards.slice(0, 5).map((_, idx) => (
+            <button
+              key={idx}
+              className={`dot ${centerIndex % Math.min(5, validCards.length) === idx ? 'active' : ''}`}
+              onClick={() => setCenterIndex(idx)}
+              title={`Go to slide ${idx + 1}`}
+              aria-label={`Slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Hero Title */}
+        <div className="hero-text-block">
+          <h1 className="hero-title">Find Your Next Anime Obsession</h1>
+        </div>
       </div>
     </section>
   );

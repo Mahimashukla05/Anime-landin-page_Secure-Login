@@ -43,7 +43,7 @@ export default function Navbar({ onOpenAuthModal, onOpenOnboardingModal }) {
 
             {showDropdown && (
               <ul className="dropdown-menu">
-                <li style={{ padding: '10px 18px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: 800, borderBottom: '1px solid var(--border-subtle)' }}>
+                <li style={{ padding: '10px 18px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: 800, borderBottom: '1px solid var(--border-medium)' }}>
                   User: {user.username}
                 </li>
                 <li>
@@ -57,7 +57,7 @@ export default function Navbar({ onOpenAuthModal, onOpenOnboardingModal }) {
                     Edit Preferences
                   </button>
                 </li>
-                <li style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                <li style={{ borderTop: '1px solid var(--border-medium)' }}>
                   <button
                     onClick={() => {
                       setShowDropdown(false);

@@ -36,7 +36,7 @@ app.get('/api/health', async (req, res) => {
     await db.command({ ping: 1 });
     res.status(200).json({
       status: 'OK',
-      message: 'DemoReco V2 Backend API is running smoothly.',
+      message: 'Komorebi V2 Backend API is running smoothly.',
       database: 'Connected to MongoDB',
       timestamp: new Date().toISOString()
     });
@@ -54,7 +54,7 @@ async function startServer() {
   try {
     await connectDB();
     app.listen(PORT, () => {
-      console.log(`[Server] DemoReco V2 Backend running on http://localhost:${PORT}`);
+      console.log(`[Server] Komorebi V2 Backend running on http://localhost:${PORT}`);
       console.log(`[Server] API Endpoints mounted: /api/auth, /api/anime, /api/preferences, /api/interactions`);
       console.log(`[Server] Health check: http://localhost:${PORT}/api/health`);
     });

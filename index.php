@@ -6,13 +6,13 @@ session_start();
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Demoreco - Watch Animes</title>
+  <title>Komorebi - Watch Animes</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header>
-    <div class="logo">Demoreco</div>
+    <div class="logo">Komorebi</div>
     <nav>
       <ul class="nav-links">
         <li><a href="#">Home</a></li>
@@ -78,7 +78,7 @@ session_start();
     <div class="auth-box fancy-box">
       <span class="close-btn" onclick="closeModal()">✕</span>
       <form id="login-form" class="auth-form" method="POST" style="display: none;">
-        <h2>Login to Demoreco</h2>
+        <h2>Login to Komorebi</h2>
         <input type="text" id="login_username_or_email" name="username_or_email" placeholder="Email or Username" required>
         <small id="login-hint-message" style="color: #ff9800; display: block; margin-top: 4px;"></small>
         <input type="password" name="password" placeholder="Password" required>
@@ -99,7 +99,7 @@ session_start();
     </div>
   </div>
   <footer>
-    <p>&copy; 2025 Demoreco. All rights reserved.</p>
+    <p>&copy; 2025 Komorebi. All rights reserved.</p>
     <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
   </footer>
   <div id="messageBox"></div>

@@ -338,7 +338,7 @@ export default function OnboardingModal({ isOpen, onClose, onSuccess }) {
         {step === 3 && (
           <div>
             <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '16px', textAlign: 'center', fontWeight: 600 }}>
-              Select the mood or experience you want DemoReco to prioritize.
+              Select the mood or experience you want Komorebi to prioritize.
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '10px', maxHeight: '260px', overflowY: 'auto', paddingRight: '4px' }}>

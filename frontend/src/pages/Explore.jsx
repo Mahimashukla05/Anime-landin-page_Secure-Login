@@ -100,7 +100,7 @@ export default function Explore({ onOpenAuthModal }) {
 
     } catch (err) {
       console.error('[Explore Fetch Error]', err);
-      setError(err.message || 'Could not connect to DemoReco Backend API.');
+      setError(err.message || 'Could not connect to Komorebi Backend API.');
     } finally {
       setLoading(false);
     }

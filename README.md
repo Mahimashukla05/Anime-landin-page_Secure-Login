@@ -1,8 +1,8 @@
-# DemoReco V2 — Explainable Anime Recommendation & Discovery Platform
+# Komorebi V2 — Explainable Anime Recommendation & Discovery Platform
 
-DemoReco V2 is an explainable Anime Discovery Platform built with **React 18, Node.js, Express, and MongoDB**. It addresses the classic cold-start problem in recommendation systems by combining a 3-question onboarding wizard with a transparent, content-based recommendation engine.
+Komorebi V2 is an explainable Anime Discovery Platform built with **React 18, Node.js, Express, and MongoDB**. It addresses the classic cold-start problem in recommendation systems by combining a 3-question onboarding wizard with a transparent, content-based recommendation engine.
 
-Rather than relying on black-box AI models to select content, DemoReco V2 uses a deterministic mathematical scoring algorithm to select candidate recommendations. An **AI Personalization Layer** powered by the **Google Gemini API (`@google/genai` SDK)** synthesizes concise, human-grade explanations for the pre-selected recommendations, backed by automatic deterministic fallbacks if the AI API is unavailable.
+Rather than relying on black-box AI models to select content, Komorebi V2 uses a deterministic mathematical scoring algorithm to select candidate recommendations. An **AI Personalization Layer** powered by the **Google Gemini API (`@google/genai` SDK)** synthesizes concise, human-grade explanations for the pre-selected recommendations, backed by automatic deterministic fallbacks if the AI API is unavailable.
 
 ---
 
@@ -12,7 +12,7 @@ Traditional recommendation systems often suffer from two key flaws:
 1. **The Cold-Start Problem**: New users with zero interaction history receive generic or irrelevant recommendations.
 2. **The Black-Box Dilemma**: Users are shown recommendations without knowing *why* an item was chosen, leading to low trust.
 
-DemoReco V2 solves both problems by:
+Komorebi V2 solves both problems by:
 * Gathering explicit anchor preferences (favorite anime, preferred genres, experience moods) during onboarding.
 * Using a transparent mathematical scoring model (Jaccard genre similarity, mood mapping, disliked penalties) that generates clear, deterministic reasons for every pick.
 * Layering Google Gemini Flash over the deterministic candidate list to craft personalized, 1-sentence explanations.
@@ -159,7 +159,7 @@ Create `backend/.env` based on `.env.example`:
 ```env
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017
-DB_NAME=demoreco
+DB_NAME=komorebi
 CLIENT_ORIGIN=http://localhost:5173
 JWT_ACCESS_SECRET=your_jwt_access_secret_here
 JWT_REFRESH_SECRET=your_jwt_refresh_secret_here
@@ -196,7 +196,7 @@ Open `http://localhost:5173` in your browser.
 
 ## 🧪 Testing & Verification
 
-DemoReco V2 includes a comprehensive suite of automated regression test scripts:
+Komorebi V2 includes a comprehensive suite of automated regression test scripts:
 * `test-runner.js`: Auth & token rotation suite (**20/20 PASSED**).
 * `test-step3.js`: Data layer & catalog indexing suite (**11/11 PASSED**).
 * `test-step5-auth-integration.js`: React auth flow suite (**10/10 PASSED**).

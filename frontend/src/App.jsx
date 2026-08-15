@@ -60,7 +60,7 @@ function MainApp() {
         <Explore onOpenAuthModal={handleOpenAuthModal} />
       </main>
       <footer>
-        <p>&copy; {new Date().getFullYear()} DemoReco. Modern Anime Discovery Platform.</p>
+        <p>&copy; {new Date().getFullYear()} Komorebi. Modern Anime Discovery Platform.</p>
       </footer>
 
       <AuthModal

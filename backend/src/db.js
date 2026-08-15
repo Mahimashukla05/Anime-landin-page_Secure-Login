@@ -15,7 +15,7 @@ async function connectDB() {
     throw new Error('MONGODB_URI is not defined in environment variables.');
   }
 
-  const dbName = process.env.DB_NAME || 'demoreco';
+  const dbName = process.env.DB_NAME || 'komorebi';
 
   // Explicit TLS configuration for cloud hosting providers (e.g. Render) & MongoDB Atlas
   const clientOptions = {

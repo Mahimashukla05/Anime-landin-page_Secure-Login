@@ -28,7 +28,7 @@ export default function Navbar({ onOpenAuthModal, onOpenOnboardingModal }) {
 
   return (
     <header className="navbar">
-      <a href="#" className="logo">Demo<span>Reco</span></a>
+      <a href="#" className="logo">Komore<span>bi</span></a>
 
       <div className="nav-actions">
         {user ? (

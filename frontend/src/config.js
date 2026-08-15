@@ -1,6 +1,6 @@
 /**
- * Centralized API Configuration for DemoReco V2 Frontend
- * In production (Vercel), VITE_API_BASE_URL will point to the deployed backend (e.g. https://demoreco-api.onrender.com/api).
+ * Centralized API Configuration for Komorebi V2 Frontend
+ * In production, VITE_API_BASE_URL will point to the deployed backend.
  * In development, falls back to http://localhost:5000/api.
  */
 

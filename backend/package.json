@@ -1,7 +1,7 @@
 {
-  "name": "demoreco-backend",
+  "name": "komorebi-backend",
   "version": "2.0.0",
-  "description": "DemoReco V2 Modern Anime Discovery Platform Backend API",
+  "description": "Komorebi V2 Modern Anime Discovery Platform Backend API",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

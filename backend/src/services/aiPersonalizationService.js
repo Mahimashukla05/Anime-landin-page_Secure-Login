@@ -31,7 +31,7 @@ async function generateAIPersonalization(userPreferences = null, topCandidates =
     };
 
     const prompt = `
-You are an expert anime personalization assistant for DemoReco V2.
+You are an expert anime personalization assistant for Komorebi V2.
 Your task is to craft 1 concise, engaging sentence for each candidate anime explaining why it fits the user's taste.
 
 USER CONTEXT:

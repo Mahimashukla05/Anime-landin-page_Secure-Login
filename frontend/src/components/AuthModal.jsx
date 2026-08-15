@@ -54,7 +54,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
             {mode === 'login' ? 'Welcome Back' : 'Create Account'}
           </h2>
           <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: '4px', fontWeight: 600 }}>
-            {mode === 'login' ? 'Log in to access your personalized recommendations' : 'Join DemoReco to discover personalized anime'}
+            {mode === 'login' ? 'Log in to access your personalized recommendations' : 'Join Komorebi to discover personalized anime'}
           </p>
         </div>
 
